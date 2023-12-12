@@ -1,11 +1,10 @@
 # scc-meta-analysis
 This repo contains code for "Gene expression landscape of cutaneous squamous cell carcinoma progression" by Bencomo and Lee. 
 
-## Data Processing
-Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM. It can be found [here](https://github.com/tjbencomo/nmsc-star).
-
 ## Data
 ### Processed Data
+Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM. 
+It can be found [here](https://github.com/tjbencomo/nmsc-star).
 The processed data for this project is available at [Zenodo](https://zenodo.org/records/10272679).
 
 ### Raw Data
