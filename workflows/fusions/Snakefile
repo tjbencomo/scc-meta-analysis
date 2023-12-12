@@ -1,0 +1,66 @@
+import os
+import pandas as pd
+
+container_dir = '/home/groups/carilee/software/containers'
+ref_dir = '/home/groups/carilee/refs/rnaseq-refs/ctat/'
+star_refs = os.path.join(ref_dir, 'GRCh38_gencode_v37_CTAT_lib_Mar012021.plug-n-play', 'ctat_genome_lib_build_dir')
+star_env = os.path.join(container_dir, 'star-fusion.v1.12.0.simg')
+ctat_muts_env = os.path.join(container_dir, 'ctat_mutations.v3.3.1.simg')
+eda_env = os.path.join(container_dir, 'eda_latest.sif')
+splice_env = os.path.join(container_dir, 'ctat_splicing.v0.0.2.simg')
+star_threads = 8
+mut_threads = 4
+logpath = '/home/users/tbencomo/nmsc-rna-seq/workflows/fusions/slurm-logs'
+
+outdir = '/scratch/users/tbencomo/nmsc-fusions' # where to save output
+starDir = '/scratch/groups/carilee/nmsc-star/star'
+
+metadatafp = 'metadata_final_cohort_with_paths.csv'
+df = pd.read_csv(metadatafp)
+df['sample_id'] = df['patient'] + '-' + df['condition']
+df = df.set_index(['sample_id'], drop=False)
+#df = df.head(2)
+#df = df[df['sample_id'] == 'Sample_286-SCC']
+
+def get_fq(wildcards):
+    if isPaired(wildcards):
+        return {'fq1' : df.loc[wildcards.sample_id, 'fq1'],
+                'fq2' : df.loc[wildcards.sample_id, 'fq2']}
+    else:
+        return {'fq1' : df.loc[wildcards.sample_id, 'fq1']}
+
+def isPaired(wildcards):
+    return pd.isnull(df.loc[wildcards.sample_id, 'fq2']) == False
+
+
+rule targets:
+    input:
+        expand(os.path.join(outdir, 'star-fusion', '{sample_id}', 'Aligned.sortedByCoord.out.bam'), sample_id = df['sample_id'])
+
+rule star_fusion:
+    input:
+        unpack(get_fq),
+        refdir = star_refs
+    output:
+        outdir=directory(os.path.join(outdir, "star-fusion", "{sample_id}")),
+        outbam=os.path.join(outdir, 'star-fusion', '{sample_id}', 'Aligned.sortedByCoord.out.bam'),
+        outfile=os.path.join(outdir, 'star-fusion', '{sample_id}', 'star-fusion.fusion_predictions.abridged.tsv'),
+        sjtab=os.path.join(outdir, 'star-fusion', '{sample_id}', 'SJ.out.tab'),
+        chimj=os.path.join(outdir, 'star-fusion', '{sample_id}', 'Chimeric.out.junction'),
+    singularity: star_env
+    threads: star_threads
+    params: nthreads = star_threads * 2
+    shell:
+        """
+        STAR-Fusion \
+        --genome_lib_dir {input.refdir} \
+        --left_fq {input.fq1} \
+        --right_fq {input.fq2} \
+        --output_dir {output.outdir} \
+        --STAR_SortedByCoordinate \
+        --STAR_outSAMattrRGline "ID:id SM:{wildcards.sample_id}" \
+        --examine_coding_effect \
+        --FusionInspector validate \
+        --CPU {params.nthreads}
+        """
+

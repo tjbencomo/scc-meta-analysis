@@ -1,0 +1,29 @@
+{
+    "__default__" :
+    {
+        "account" : "tbencomo",
+        "time" : "01:00:00",
+        "ncpus" : 1,
+        "mem" : "8G",
+        "partition" : "normal",
+        "out" : "{logpath}/{rule}-{jobid}.out"
+    },
+    "star_fusion" :
+    {
+        "time" : "12:00:00",
+        "ncpus" : 6,
+        "mem" : "48G",
+        "out" : "{logpath}/{rule}-{wildcards.sample_id}.out"
+    },
+    "samtools_index" :
+    {
+        "out" : "{logpath}/{rule}-{wildcards.sample_id}.out"
+    },
+    "ctat_splice" :
+    {
+        "time" : "01:00:00",
+        "ncpus" : 1,
+        "mem" : "16G",
+        "out" : "{logpath}/{rule}-{wildcards.sample_id}.out"
+    }
+}
