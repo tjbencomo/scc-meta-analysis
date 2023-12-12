@@ -18,9 +18,17 @@ above will generate BAM files and DESeq2 analysis
 
 ## Analysis Scripts
 * `batch_correction.R` - perform limma batch correction on VST data
+* `gsva_scoring.R` - calculate sample-wise enrichment of Hallmark and Reactome pathways with GSVA
+* `investigate_outlier_expression.R` and `investigate_outliers_pca_umap.R` - investigate outliers
+* `individual_study_deg_analysis.R` - perform DE analysis for NS vs SCC on each study cohort
 
 ## Figure Scripts
 ### Figure 1 and S1
 * `pre_post_batch_correction_plots.R` - make PCA and UMAP plots
 * `dvp_plots.R` - make DvP score overlay on PCA plot
 * `studies_qc_scatterplot.R` - make QC plots in S1
+
+### Figure 2 and S2
+* `study_variation_plots.R`
+
+### Figure 3 and S3
