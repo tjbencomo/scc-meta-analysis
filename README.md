@@ -33,7 +33,7 @@ above will generate BAM files and DESeq2 analysis
 ### Figure 2 and S2
 * `study_variation_plots.R`
 
-### Figure 3 and S3
+### Figure 3, S3, and S4
 * `volcano_plots.R` - draw DEG volcano plots in 3B and S3A
 * `canonical_cscc_degs.R` - draw 3C heatmap showing canonical gene expression
 * `ns_ak_scc_gsea_plots.R` - draw GSEA volcano plot in 3D
@@ -41,3 +41,4 @@ above will generate BAM files and DESeq2 analysis
 * `highlighted_de_genes.R` - plot expression of RET ligand and targets in S3B
 * `gsea_RET_signature.R` - draw GSEA plot of RET regulon
 * `meta_driver_gene_expression.R` - draw expression heatmap of potential driver genes
+* `iec_ka_ak_comparison.R` - Compare KA vs SCC GSVA scores and draw S4 boxplots
