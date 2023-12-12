@@ -26,6 +26,11 @@ above can generate BAM files and perform the DESeq2 analysis
 * `cibersort_mixture_maker.R` and `cibersort_scRNA_matrix_maker.R` - make CIBERSORTx input data
 * `gtex_sun_exposure_analysis.R` - DE analysis of sun exposed vs protected skin from GTEx
 
+### Fusion Calling
+Fusions were detected with the STAR-Fusion pipeline. The workflow to run STAR-Fusion on the patient samples is in `workflow/fusions`.
+`call_fusions_in_cell_lines.sh` runs STAR-Fusion on the cell line samples. 
+Use `gather_fusions.py` to collate fusion results after STAR-Fusion finishes. 
+
 ## Figure Scripts
 ### Figure 1 and S1
 * `pre_post_batch_correction_plots.R` - make PCA and UMAP plots
