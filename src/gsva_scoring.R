@@ -24,7 +24,7 @@ vsd <- readRDS(file.path(deseqDir, "limma_batch_normalized.rds"))
 rownames(vsd) <- rowData(vsd)$symbol
 
 hallmark <- gmtPathways(file.path(dataDir, "genesets", "h.all.v7.4.symbols.gmt"))
-reactome <- gmtPathways(file.path( dataDir, "genesets", "c2.cp.reactome.v7.4.symbols.gmt"))
+reactome <- gmtPathways(file.path(dataDir, "genesets", "c2.cp.reactome.v7.4.symbols.gmt"))
 
 early_df_sig <- read_excel(file.path(dataDir, "Bailey_2023_Signatures.xlsx"), sheet = 1)$GeneID
 late_df_sig <- read_excel(file.path(dataDir, "Bailey_2023_Signatures.xlsx"), sheet = 2)$GeneID
