@@ -17,5 +17,8 @@ Raw data can easily be downloaded from the apropriate sites with the data downlo
 above will generate BAM files and DESeq2 analysis
 
 ## Analysis Scripts
+* `batch_correction.R` - perform limma batch correction on VST data
+
+## Figure Scripts
 
 
