@@ -18,7 +18,26 @@ above will generate BAM files and DESeq2 analysis
 
 ## Analysis Scripts
 * `batch_correction.R` - perform limma batch correction on VST data
+* `gsva_scoring.R` - calculate sample-wise enrichment of Hallmark and Reactome pathways with `GSVA`
+* `investigate_outlier_expression.R` and `investigate_outliers_pca_umap.R` - investigate outliers
+* `individual_study_deg_analysis.R` - perform DE analysis for NS vs SCC on each study cohort
+* `gsea_analysis.R` - GSEA using Hallmark and Reactome pathways with `fgea`
+* `Create_Ji_scRNA_SeuratObject.R` - Create Seurat object with Ji NS and SCC data
 
 ## Figure Scripts
+### Figure 1 and S1
+* `pre_post_batch_correction_plots.R` - make PCA and UMAP plots
+* `dvp_plots.R` - make DvP score overlay on PCA plot
+* `studies_qc_scatterplot.R` - make QC plots in S1
 
+### Figure 2 and S2
+* `study_variation_plots.R`
 
+### Figure 3 and S3
+* `volcano_plots.R` - draw DEG volcano plots in 3B and S3A
+* `canonical_cscc_degs.R` - draw 3C heatmap showing canonical gene expression
+* `ns_ak_scc_gsea_plots.R` - draw GSEA volcano plot in 3D
+* `top_degs_in_scRNA.R` - single cell expression plots in 3D and S3E
+* `highlighted_de_genes.R` - plot expression of RET ligand and targets in S3B
+* `gsea_RET_signature.R` - draw GSEA plot of RET regulon
+* `meta_driver_gene_expression.R` - draw expression heatmap of potential driver genes
