@@ -17,6 +17,8 @@ Raw data can easily be downloaded from the apropriate sites with the data downlo
 above can generate BAM files and perform the DESeq2 analysis
 
 ## Analysis Scripts
+These scripts must be run before trying to generate figures
+
 * `batch_correction.R` - perform limma batch correction on VST data
 * `gsva_scoring.R` - calculate sample-wise enrichment of Hallmark and Reactome pathways with `GSVA`
 * `investigate_outlier_expression.R` and `investigate_outliers_pca_umap.R` - investigate outliers
