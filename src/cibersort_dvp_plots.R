@@ -154,7 +154,46 @@ wilcox.test(Mesenchymal_Fibroblast ~ RDEB_Status, data=df %>% filter(condition =
 rdebCompPlots <- diffRdebPlot | tskRdebPlot
 rdebCompPlots
 
+## Correlate DvP with cell types
+dvpTskPlot <- df %>%
+  ggplot(aes(DvP_Score, TSK)) +
+  geom_point(size = 2) +
+  # geom_smooth(method = 'lm') +
+  labs(x = "DvP Score", y = "TSKs")
+dvpTskPlot
+cor.test(df$DvP_Score, df$TSK, method = 'spearman')
 
+dvpDiffPlot <- df %>%
+  ggplot(aes(DvP_Score, Tumor_KC_Diff)) +
+  geom_point(size = 2) +
+  # geom_smooth(method = 'lm') +
+  labs(x = "DvP Score", y = "Differentiated Tumor Cells")
+dvpDiffPlot
+cor.test(df$DvP_Score, df$Tumor_KC_Diff, method = 'spearman')
+
+dvpBasalPlot <- df %>%
+  ggplot(aes(DvP_Score, Tumor_KC_Basal)) +
+  geom_point(size = 2) +
+  # geom_smooth(method = 'lm') +
+  labs(x = "DvP Score", y = "Basal Tumor Cells")
+dvpBasalPlot
+cor.test(df$DvP_Score, df$Tumor_KC_Basal, method = 'spearman')
+
+dvpCycPlot <- df %>%
+  ggplot(aes(DvP_Score, Tumor_KC_Cyc)) +
+  geom_point(size = 2) +
+  # geom_smooth(method = 'lm') +
+  labs(x = "DvP Score", y = "Cycling Tumor Cells")
+dvpCycPlot
+cor.test(df$DvP_Score, df$Tumor_KC_Cyc, method = 'spearman')
+
+
+dvpInflamPlot <- df %>%
+  ggplot(aes(DvP_Score, Inflam_Fibroblast)) +
+  geom_point(size = 2) +
+  labs(x = "DvP Score", y = "Inflammatory Fibroblasts")
+dvpInflamPlot
+cor.test(df$DvP_Score, df$Inflam_Fibroblast)
 
 tskInflamPlot <- df %>%
   ggplot(aes(TSK, Inflam_Fibroblast)) +
@@ -172,6 +211,9 @@ cor.test(df$TSK, df$Mesenchymal_Fibroblast)
 
 infoCols <- c("Mixture", "P-value", "Correlation", "RMSE", "Absolute score (sig.score)")
 cellTypeCols <- setdiff(c(colnames(nonimmunedf), colnames(immunedf)), infoCols)
+deconMat <- as.matrix(df[df$condition == "SCC", cellTypeCols])
+
+# ctCorPlot <- corrplot(cor(deconMat, method = 'spearman'), type = 'upper')
 
 diffCd8Plot <- df %>%
   filter(condition == "SCC") %>%
@@ -201,7 +243,10 @@ with(
 mahapdf <- read_csv("data/Mahapatra_Immune_Info.csv")
 baileydf <- read_csv("data/Bailey_Supplemental_File1.csv")
 baileydf$original_sample_id <- str_c("PRNJA844527", baileydf$SEQ_ID, sep="_")
-
+lukowskidf <- read_csv("data/E-MTAB-6430.csv")
+lukowskidf <- lukowskidf %>% 
+  rename(original_sample_id = sample_id, sample_accession = ena_accession)
+  
 
 immunodf <- df %>%
   left_join(
@@ -213,9 +258,11 @@ immunodf <- df %>%
       select(original_sample_id, Immune_Status),
     by = "original_sample_id"
   ) %>%
+  left_join(lukowskidf, by = c("sample_accession", "original_sample_id")) %>%
   mutate(temp = case_when(
     !is.na(Immune_Status.x) ~ Immune_Status.x,
     !is.na(Immune_Status.y) ~ Immune_Status.y,
+    !is.na(immune_status) ~ immune_status,
     TRUE ~ NA
   )) %>%
   mutate(Immune_Status = case_when(
@@ -224,6 +271,8 @@ immunodf <- df %>%
     temp == "RTR-IS" ~ "IS",
     temp == "IC" ~ "IC",
     temp == "IS" ~ "IS", # this was missing before
+    temp == "immunosuppressed" ~ "IS",
+    temp == "immunocompetent" ~ "IC",
     study_name == "Chitsazzadeh_2016" ~ "IC",
     study_name == "Veenstra_2023" ~ "IC",
     TRUE ~ NA
@@ -233,6 +282,7 @@ immunodf <- df %>%
   mutate(Immune_Status = factor(Immune_Status, levels = c("IC", "IS")))
 write_csv(immunodf, "data/Immune_Status_CIBERSORTx.csv")
 
+# immunodf <- immunodf %>% filter(study_name == "Bailey_2023")
 
 immunodf %>% count(Immune_Status)
 immunodf %>% count(Immune_Status_Detail)
@@ -280,9 +330,24 @@ wilcox.test(`T cells CD8` ~ Immune_Status, data = immunodf)
 immunePlots <- bcellPlot | cd8Plot
 
 
+
+# (tumorSubpopCompPlots | rdebCompPlots) / (fibSubpopCompPlots | immunePlots)
+
 mainFigure <- (diffCondPlot | tskCondPlot | diffRdebPlot | tskRdebPlot) /
   (inflamFibCondPlot | mesenchFibCondPlot | bcellPlot | cd8Plot)
 
+# immunodf %>%
+#   ggplot(aes(Immune_Status, `Plasma cells`)) +
+#   geom_boxplot()
+# immunodf %>%
+#   ggplot(aes(Immune_Status, `B cells naive`)) +
+#   geom_boxplot()
+# immunodf %>%
+#   ggplot(aes(Immune_Status, `T cells follicular helper`)) +
+#   geom_boxplot()
+# immunodf %>%
+#   ggplot(aes(Immune_Status, `Eosinophils`)) +
+#   geom_boxplot()
 
 ## Save figures
 ggsave(
