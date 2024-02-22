@@ -11,7 +11,8 @@ library(patchwork)
 
 # Set up paths
 figureDir <- file.path("figures", "manuscript")
-dataDir <- file.path("data")
+# dataDir <- file.path("data")
+dataDir <- file.path("~", "Downloads", "scc-meta-analysis-data")
 
 # Load fusions from patient samples
 patient_fusions <- read_csv(file.path(dataDir, "fusions.csv"))
@@ -138,6 +139,8 @@ count_plots
 sccFusions <- fusions %>% filter(condition == "SCC") %>% pull(FusionName)
 nsFusions <-  fusions %>% filter(condition == "NS") %>% pull(FusionName)
 akFusions <-  fusions %>% filter(condition == "AK") %>% pull(FusionName)
+# akIecFusions <- fusions %>% filter(condition == "AK_IEC") %>% pull(FusionName)
+# akIecSccFusions <- fusions %>% filter(condition == "AK_IEC_SCC") %>% pull(FusionName)
 iecFusions <-  fusions %>% filter(condition == "IEC") %>% pull(FusionName)
 kaFusions <- fusions %>% filter(condition == "KA") %>% pull(FusionName)
 a431Fusions <- fusions %>% filter(condition == "A431") %>% pull(FusionName)
@@ -148,6 +151,8 @@ fusion_list <- list(
   'SCC' = sccFusions,
   'NS' = nsFusions,
   'AK' = akFusions,
+  # 'AK_IEC' = akIecFusions,
+  # 'AK_IEC_SCC' = akIecSccFusions,
   'IEC' = iecFusions,
   'KA' = kaFusions,
   'A431' = a431Fusions,
@@ -274,9 +279,13 @@ nonNormalLesionFusionalTable <- fusions %>%
         LeftBreakpoint, RightBreakpoint, condition) %>%
   tidyr::pivot_wider(names_from = "condition", values_from = "n") %>%
   replace(is.na(.), 0) %>%
-  select(FusionName, LeftBreakpoint, RightBreakpoint, SCC, AK, IEC, KA, 
+  select(FusionName, LeftBreakpoint, RightBreakpoint, SCC, AK, IEC, KA,
          Normal_Tissue_Flag, TCGA_Flag, Includes_COSMIC_Partner) %>% 
   arrange(desc(SCC))
+ffpmdf <- fusions %>%
+  filter(condition %in% lesionTypes, FusionName %in% nonNormalLesionalFusions$FusionName) %>%
+  group_by(FusionName) %>%
+  summarize(mean_FFPM = mean(FFPM))
 xids <- paste0(nonNormalLesionFusionalTable$FusionName, "_",
               nonNormalLesionFusionalTable$LeftBreakpoint, "_",
               nonNormalLesionFusionalTable$RightBreakpoint)
@@ -289,9 +298,149 @@ proteinInfo <- fusions %>%
 nonNormalLesionFusionalTable$fid <- xids
 nonNormalLesionFusionalTable <- nonNormalLesionFusionalTable %>%
   inner_join(proteinInfo) %>% 
-  select(-fid)
+  select(-fid) %>%
+  left_join(ffpmdf) %>%
+  select(
+    FusionName, LeftBreakpoint, RightBreakpoint, SCC, AK, IEC, KA, mean_FFPM, 
+    Normal_Tissue_Flag, TCGA_Flag, Includes_COSMIC_Partner,
+    PROT_FUSION_TYPE, FUSION_CDS, FUSION_TRANSL
+  )
+
+# tcgaLesionalFusionTable <- fusions %>%
+#   filter(condition %in% lesionTypes, FusionName %in% tcgaLesionalFusions$FusionName) %>%
+#   mutate(
+#     GTEx_Flag = str_detect(annots, "GTEx_recurrent_StarF2019"),
+#     Babiceanu_Normal_Flag = str_detect(annots, "Babiceanu_Normal"),
+#     Neighbors_Flag = str_detect(annots, "NEIGHBORS"),
+#     TCGA_Star_Flag = str_detect(annots, "TCGA_StarF2019"),
+#   ) %>%
+#   mutate(Normal_Tissue_Flag = case_when(
+#     GTEx_Flag | Babiceanu_Normal_Flag  ~ TRUE,
+#     !GTEx_Flag & !Babiceanu_Normal_Flag ~ FALSE,
+#   )) %>%
+#   mutate(
+#     TCGA_Flag = case_when(
+#       TCGA_Star_Flag | (FusionName %in% tcgadf$Fusion) ~ TRUE,
+#       TRUE ~ FALSE
+#     )
+#   ) %>%
+#   mutate(
+#     LeftGene_Is_COSMIC = LeftGeneSymbol %in% cosmicdf$`Gene Symbol`,
+#     RightGene_Is_COSMIC = LeftGeneSymbol %in% cosmicdf$`Gene Symbol`,
+#   ) %>%
+#   mutate(Includes_COSMIC_Partner = LeftGene_Is_COSMIC | RightGene_Is_COSMIC) %>%
+#   count(FusionName, Normal_Tissue_Flag, TCGA_Flag, Includes_COSMIC_Partner, 
+#         LeftBreakpoint, RightBreakpoint, condition) %>%
+#   tidyr::pivot_wider(names_from = "condition", values_from = "n") %>%
+#   replace(is.na(.), 0) %>%
+#   select(FusionName, LeftBreakpoint, RightBreakpoint, SCC, AK, IEC, 
+#          Normal_Tissue_Flag, TCGA_Flag, Includes_COSMIC_Partner) %>% 
+#   arrange(desc(SCC))
+
 
 write_csv(nonNormalLesionFusionalTable, file.path(dataDir, "Lesional_Fusions_Table1.csv"))
+# write_csv(tcgaLesionalFusionTable, file.path(dataDir, "Lesional_Fusions_Table2.csv"))
+
+
+
+
+# recurrence_stats <- fusions %>%
+#   mutate(Present_TCGA = str_detect(annots, "TCGA_StarF2019")) %>%
+#   mutate(Present_GTEx = str_detect(annots, "GTEx_recurrent_StarF2019")) %>%
+#   mutate(Present_Normal = str_detect(annots, "Babiceanu_Normal") | Present_GTEx) %>%
+#   count(FusionName, Present_TCGA, Present_GTEx, Present_Normal, LeftGeneSymbol, RightGeneSymbol, condition) %>%
+#   tidyr::pivot_wider(names_from = "condition", values_from = "n") %>%
+#   replace(is.na(.), 0) %>%
+#   mutate(cosmic_partner = LeftGeneSymbol %in% cosmicdf$`Gene Symbol` | RightGeneSymbol %in% cosmicdf$`Gene Symbol`)
+# 
+# ## SCC specific fusions
+# cancer_fusions <- recurrence_stats %>%
+#   filter(NS == 0) %>%
+#   arrange(desc(SCC))
+# 
+# ## KA specific fusions
+# cancer_fusions %>%
+#   filter(IEC > 0)
+# 
+# ## Save fusion table results
+# cancer_fusions %>%
+#   rename(Cosmic_Partner = cosmic_partner) %>%
+#   select(-LeftGeneSymbol, -RightGeneSymbol) %>%
+#   select(FusionName, Present_TCGA, Present_GTEx, Present_Normal, Cosmic_Partner, everything()) %>%
+#   write_csv(file.path(dataDir, "lesional_fusions.csv"))
+# 
+# 
+# ## Check Cosmic genes
+# fusions %>%
+#   filter(LeftGeneSymbol %in% cosmicdf$`Gene Symbol` | RightGeneSymbol %in% cosmicdf$`Gene Symbol`) %>%
+#   count(condition)
+#   
+# goodFusions <- fusions %>%
+#   filter(LeftGeneSymbol %in% cosmicdf$`Gene Symbol` | RightGeneSymbol %in% cosmicdf$`Gene Symbol`) %>%
+#   filter(condition == "SCC", !(FusionName %in% c(nsFusions, akFusions, iecFusions)))
+# 
+# 
+# ## Check TCGA Fusions
+# sum(fusions$FusionName %in% tcgadf$Fusion)
+# fusions %>%
+#   filter(FusionName %in% tcgadf$Fusion) %>%
+#   count(condition)
+# 
+# fusions %>%
+#   filter(FusionName %in% tcgadf$Fusion, condition == "SCC")
+# 
+# 
+# ## Check for Normal DB/TCGA/Cosmic genes/NEIGHBOR flags
+# 
+# ## Remove fusions found in normal samples from consideration
+# ## Still consider fusions that are found in lesional samples that also appear
+# ## in normal samples
+# plot_info <- fusions %>%
+#   filter(condition != "NS") %>%
+#   distinct(FusionName, .keep_all = T) %>%
+#   mutate(
+#     GTEx_Flag = str_detect(annots, "GTEx_recurrent_StarF2019"),
+#     Babiceanu_Normal_Flag = str_detect(annots, "Babiceanu_Normal"),
+#     Neighbors_Flag = str_detect(annots, "NEIGHBORS"),
+#     TCGA_Star_Flag = str_detect(annots, "TCGA_StarF2019"),
+#     NS_Flag = FusionName %in% nsFusions
+#   ) %>%
+#   mutate(Normal_Tissue_Flag = case_when(
+#     GTEx_Flag | Babiceanu_Normal_Flag | NS_Flag  ~ "Found in Normal Tissue",
+#     !GTEx_Flag & !Babiceanu_Normal_Flag  & !NS_Flag ~ "Not Found in Normal Tissue",
+#     TRUE ~ "Something went wrong"
+#   )) %>%
+#   mutate(
+#     TCGA_Flag = case_when(
+#       TCGA_Star_Flag | (FusionName %in% tcgadf$Fusion) ~ "Found in TCGA Tumor(s)",
+#       TRUE ~ "Not Found in TCGA"
+#     )
+#   ) %>%
+#   mutate(
+#     LeftGene_Is_COSMIC = LeftGeneSymbol %in% cosmicdf$`Gene Symbol`,
+#     RightGene_Is_COSMIC = LeftGeneSymbol %in% cosmicdf$`Gene Symbol`,
+#   ) %>%
+#   mutate(Includes_COSMIC_Partner = LeftGene_Is_COSMIC | RightGene_Is_COSMIC)
+# 
+# 
+# propNormal <- sum(plot_info$Normal_Tissue_Flag == "Found in Normal Tissue")
+# propTCGA <- sum(plot_info$TCGA_Flag == "Found in TCGA Tumor(s)")
+# propCosmic <- sum(plot_info$Includes_COSMIC_Partner == TRUE)
+# 
+# plot_df <- data.frame(
+#   variable = c("Found in Normal Tissue", "Found in TCGA Tumor(s)", "Has COSMIC Gene(s)"),
+#   value = c(propNormal, propTCGA, propCosmic) / nrow(plot_info) * 100
+# )
+# 
+# fusionInfoPlot <- plot_df %>%
+#   ggplot(aes(reorder(variable, -value), value)) +
+#   geom_col(aes(fill = variable), width = .7) +
+#   guides(fill = "none") +
+#   theme_classic() +
+#   labs(x = "", y = "% Fusions From Lesional Tissue") +
+#   theme(axis.text.x = element_text(angle = 35, hjust=1, vjust=1)) +
+#   scale_y_continuous(breaks = seq(0, 70, by = 10), limits = c(0, 70))
+# fusionInfoPlot
 
 
 ## Save plots
