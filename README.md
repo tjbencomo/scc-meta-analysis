@@ -2,11 +2,6 @@
 This repo contains code for "Gene expression landscape of cutaneous squamous cell carcinoma progression" by Bencomo and Lee. 
 
 ## Data
-### Processed Data
-Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM. 
-It can be found [here](https://github.com/tjbencomo/nmsc-star).
-The processed data for this project is available at [Zenodo](https://zenodo.org/records/10272679).
-
 ### Raw Data
 Raw data can easily be downloaded from the apropriate sites with the data download scripts:
 
@@ -15,6 +10,12 @@ Raw data can easily be downloaded from the apropriate sites with the data downlo
 
 `srr_ids.txt` and `ena_fastq_urls.txt` can be found on Zenodo. Once the FASTQ files are downloaded, the Snakemake pipeline mentioned
 above can generate BAM files and perform the DESeq2 analysis
+
+### Processed Data
+Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM with the hg38 (GENCODE v38) reference. 
+It can be found [here](https://github.com/tjbencomo/nmsc-star).
+The processed data for this project is available at [Zenodo](https://zenodo.org/records/10272679).
+
 
 ## Analysis Scripts
 These scripts must be run before trying to generate figures
