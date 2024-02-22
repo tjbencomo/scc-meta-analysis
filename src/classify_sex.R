@@ -106,7 +106,6 @@ df %>%
 df$inferred_sex <- ifelse(df$km_cluster == 1, "M", "F")
 df <- df %>%
   rename(sex_from_study = gender) %>%
-  mutate(sex_from_study = ifelse(sex_from_study == "M", "Male", "Female")) %>%
   mutate(final_sex_label = case_when(
     is.na(sex_from_study) ~ inferred_sex,
     TRUE ~ sex_from_study
@@ -120,6 +119,6 @@ df %>%
 
 write_csv(
   df %>%
-    select(Sample, log_XIST_norm, log_MaleScoreNorm, sex_from_study, inferred_sex),
+    select(Sample, log_XIST_norm, log_MaleScoreNorm, sex_from_study, inferred_sex, final_sex_label),
   "data/inferred_sex_labels.csv"
 )
