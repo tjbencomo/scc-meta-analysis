@@ -2,6 +2,9 @@
 ## Doing GSVA scoring on VST data for male gene signature does not work
 ## XIST (raw counts) kind of works but not fully
 ## Use k-means clustering on XIST and chrY gene expression
+## sex_from_study - original sex/gender assigned by paper
+## inferred_sex - sex determined by k-means clustering of XIST and chrY genes.Assignments override study classification
+## final_sex_label - sex_from_study + inferred sex only when no sex_from_study assignment
 
 library(DESeq2)
 library(readr)
@@ -87,6 +90,7 @@ p1 + p2
 ggplotly(p2)
 
 # Use k-means to group into male and female clusters
+set.seed(42)
 df$log_XIST_norm <- log1p(df$XIST_norm)
 df$log_MaleScoreNorm <- log1p(df$MaleScoreNorm)
 kmres <- kmeans(df[, c("log_XIST_norm", "log_MaleScoreNorm")], centers = 2, nstart = 100)
@@ -99,7 +103,14 @@ df %>%
   labs(x = "Log10 XIST mRNA", y = "Log10 chrY Score") +
   theme_bw()
 
-df$inferred_sex <- ifelse(df$km_cluster == 1, "Female", "Male")
+df$inferred_sex <- ifelse(df$km_cluster == 1, "M", "F")
+df <- df %>%
+  rename(sex_from_study = gender) %>%
+  mutate(sex_from_study = ifelse(sex_from_study == "M", "Male", "Female")) %>%
+  mutate(final_sex_label = case_when(
+    is.na(sex_from_study) ~ inferred_sex,
+    TRUE ~ sex_from_study
+  ))
 
 df %>%
   ggplot(aes(log10(XIST_norm), log10(MaleScoreNorm), label=Sample)) +
@@ -109,7 +120,6 @@ df %>%
 
 write_csv(
   df %>%
-    rename(sex_from_study = gender) %>%
     select(Sample, log_XIST_norm, log_MaleScoreNorm, sex_from_study, inferred_sex),
   "data/inferred_sex_labels.csv"
 )
