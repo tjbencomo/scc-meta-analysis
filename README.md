@@ -17,6 +17,23 @@ It can be found [here](https://github.com/tjbencomo/nmsc-star).
 
 **The processed data for this project (metadata, expression data, DEGs, fusions etc) is available at [Zenodo](https://zenodo.org/records/10272679).**
 
+### `data/`
+This folder contains various files needed to run some of the analysis scripts:
+
+* `genesets/` - MSigDB geneset `.gmt` files
+* `gsea-results/` - CSV file with results of GSVA scores for Hallmark and Reactome signatures on all samples
+* `ji-2019/` - CSV file with fibroblast cell type subclassifications used for Ji data
+* `qc/` - STAR and RSEM quality metrics for eac sample
+* `schutz-2023` - Excel files from Schutz 2023 study with signatures for fibroblast subpopulations
+* `Bailey_2023_Signatures.xlsx` and `Bailey_Supplemental_File1.csv` - metadata files from Bailey 2023 study
+* `Up_Gene_Tally.csv` and `Dn_Gene_Tally.csv` - CSV files with number info on how many times each gene is up/downregulated in individually analyzed RNA-Seq studies (Figure 2)
+* `Gender_Labels.xlsx` - sex/gender labels for samples reported in original studies. Some studies used the term sex while others used gender
+* `Mahapatra_Immune_Info.csv` - Immune status info from Mahapatra 2020
+* `inferred_sex_labels.csv` - sex information for all samples. Includes labels from original studies (`sex_from_study`), labels inferred using XIST and chrY expression (`inferred_sex`), and a combo of these two (`final_sex_label`) that uses `sex_from_study` if present, and otherwise uses `inferred_sex`
+* `metadata_all_studies.csv` - sample info for all samples initially considered
+* `metadata_post_star_qc_cohort.csv` - samples after filtering for STAR quality filters
+* `metadata_final_cohort.csv` - final cohort of samples used in analyses
+
 
 ## Analysis Scripts
 These scripts must be run before trying to generate figures
