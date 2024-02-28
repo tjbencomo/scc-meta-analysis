@@ -3,7 +3,7 @@ This repo contains code for "Gene expression landscape of cutaneous squamous cel
 
 ## Data
 ### Raw Data
-Raw data can easily be downloaded from the apropriate sites with the data download scripts:
+Raw data (FASTQ files) can easily be downloaded from the apropriate sites with the data download scripts:
 
 * `download_sra.sh` - download all FASTQ files available on SRA. Pulls SRR IDs from `srr_ids.txt`
 * `download_ena.sh` - download all FASTQ files available on BioStudies. Pulls ERR IDs from `ena_fastq_urls.txt`
@@ -14,7 +14,8 @@ above can generate BAM files and perform the DESeq2 analysis
 ### Processed Data
 Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM with the hg38 (GENCODE v38) reference. 
 It can be found [here](https://github.com/tjbencomo/nmsc-star).
-The processed data for this project is available at [Zenodo](https://zenodo.org/records/10272679).
+
+**The processed data for this project (metadata, expression data, DEGs, fusions etc) is available at [Zenodo](https://zenodo.org/records/10272679).**
 
 
 ## Analysis Scripts
