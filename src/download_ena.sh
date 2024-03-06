@@ -15,5 +15,5 @@ ml system parallel
 fqdir=$GROUP_SCRATCH/nmsc-data
 mkdir -p $fqdir
 cd $fqdir
-ena_file=$HOME/nmsc-rna-seq/data/ena_fastq_urls.txt
+ena_file=$HOME/scc-meta-analysis/data/ena_fastq_urls.txt
 cat $ena_file | parallel -j 24 'wget {}'
