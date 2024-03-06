@@ -14,6 +14,5 @@ ml system parallel
 fqdir=$SCRATCH/nmsc-data
 mkdir -p $fqdir
 cd $fqdir
-# srr_file=$SCRATCH/nmsc-data/SRA_Remaining_Samples.txt
-srr_file=$HOME/nmsc-rna-seq/data/srr_ids.txt
+srr_file=$HOME/scc-meta-analysis/data/srr_ids.txt
 cat $srr_file | parallel -j 12 'fasterq-dump {}'
