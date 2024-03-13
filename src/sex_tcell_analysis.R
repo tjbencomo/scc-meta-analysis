@@ -8,13 +8,18 @@
 library(readr)
 library(dplyr)
 library(ggplot2)
+library(patchwork)
 
+figDir <- file.path('figures', 'manuscript')
 decondf <- read_csv("data/Immune_Status_CIBERSORTx.csv")
 sexdf <- read_csv("data/inferred_sex_labels.csv")
 
 df <- decondf %>%
   inner_join(sexdf, by = c("Sample")) %>%
   filter(!is.na(Immune_Status))
+
+df <- df %>%
+  filter(condition.x == "SCC")
 
 # Abundance of each sex per immune status
 df %>%
@@ -65,6 +70,51 @@ wilcox.test(`T cells CD8` ~ sex_from_study, data=df %>% filter(!is.na(sex_from_s
 wilcox.test(`T cells CD8` ~ sex_from_study, data=df %>% filter(!is.na(sex_from_study), Immune_Status == "IS"))
 
 
+p1 <- df %>%
+  mutate(
+    Sex = case_when(
+      is.na(sex_from_study) ~ "Not Specified",
+      sex_from_study == "M" ~ "Male",
+      sex_from_study == "F" ~ "Female"
+    )
+  ) %>%
+  ggplot(aes(Sex, `T cells CD8`)) +
+  geom_boxplot(aes(fill = Sex)) +
+  theme_bw() +
+  labs(x = "Sex From Original Study", y = "CD8 T Cells") +
+  guides(fill = "none") +
+  scale_y_continuous(limits = c(0, .65)) +
+  theme(text = element_text(size=14))
+p1
+
+p2 <- df %>%
+  mutate(
+    Sex = case_when(
+      is.na(sex_from_study) ~ "Not Specified",
+      sex_from_study == "M" ~ "Male",
+      sex_from_study == "F" ~ "Female"
+    )
+  ) %>%
+  ggplot(aes(Sex, `T cells CD8`)) +
+  geom_boxplot(aes(fill = Sex)) +
+  theme_bw() +
+  facet_wrap(~Immune_Status) +
+  labs(x = "Sex From Original Study", y = "CD8 T Cells") +
+  guides(fill = "none") +
+  scale_y_continuous(limits = c(0, .65)) +
+  theme(text = element_text(size=14))
+p2
+
+combo_plot <- (p1 | p2) + plot_layout(widths = c(1, 2))
+combo_plot
+
+ggsave(
+  filename = file.path(figDir, 'FigureS6_Sex_Differences_CD8_TCells.svg'),
+  plot = combo_plot,
+  width = 8,
+  height = 5
+)
+
 
 ## Inferred sex from XIST + chrY gene expression
 ## How many of each sex
@@ -109,3 +159,18 @@ wilcox.test(`T cells CD8` ~ final_sex_label, data=df %>% filter(!is.na(final_sex
 wilcox.test(`T cells CD8` ~ final_sex_label, data=df %>% filter(!is.na(final_sex_label), Immune_Status == "IS"))
 
 wilcox.test(`T cells CD8` ~ Immune_Status, data=df)
+
+
+
+df %>%
+  ggplot(aes(Immune_Status, `T cells CD8`)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(aes(color = sex_from_study), size = 2) +
+  theme_classic()
+
+
+
+df %>%
+  ggplot(aes(Immune_Status, `T cells CD8`)) +
+  geom_boxplot() +
+  facet_wrap(~sex_from_study)
