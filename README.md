@@ -53,31 +53,33 @@ Fusions were detected with the STAR-Fusion pipeline. The workflow to run STAR-Fu
 Use `gather_fusions.py` to collate fusion results after STAR-Fusion finishes. 
 
 ## Figure Scripts
-### Figure 1 and S1
+Figure ordering is for published version not preprint
+### Figure 2 and S1
 * `pre_post_batch_correction_plots.R` - make PCA and UMAP plots
 * `dvp_plots.R` - make DvP score overlay on PCA plot
 * `studies_qc_scatterplot.R` - make QC plots in S1
 
-### Figure 2 and S2
+### Figure 3 and S2
 * `study_variation_plots.R`
 
-### Figure 3, S3, and S4
-* `volcano_plots.R` - draw DEG volcano plots in 3B and S3A
-* `canonical_cscc_degs.R` - draw 3C heatmap showing canonical gene expression
-* `ns_ak_scc_gsea_plots.R` - draw GSEA volcano plot in 3D
-* `top_degs_in_scRNA.R` - single cell expression plots in 3D and S3E
+### Figure 4, S3, and S4
+* `volcano_plots.R` - draw DEG volcano plots in 4B and S3A
+* `canonical_cscc_degs.R` - draw 4C heatmap showing canonical gene expression
+* `ns_ak_scc_gsea_plots.R` - draw GSEA volcano plot in 4D
+* `top_degs_in_scRNA.R` - single cell expression plots in 4E and S3E
 * `highlighted_de_genes.R` - plot expression of RET ligand and targets in S3B
 * `gsea_RET_signature.R` - draw GSEA plot of RET regulon
 * `meta_driver_gene_expression.R` - draw expression heatmap of potential driver genes
 * `iec_ka_ak_comparison.R` - Compare KA vs SCC GSVA scores and draw S4 boxplots
 
-### Figure 4 and S5
+### Figure 5, S5, S6
 * `fibroblast_subpop_analysis.R` - Define fibroblast subpopulations in Ji's data and draw S5A-B
-* `cibersort_dvp_plots.R` - compare cell type abundances in KA vs SCC, RDEB vs sporadic, and IC vs IS. Figure 4 and S5C
+* `cibersort_dvp_plots.R` - compare cell type abundances in KA vs SCC, RDEB vs sporadic, and IC vs IS. Figure 5 and S5C
 * `cibersort_immune_comp_table.R` and `cibersort_tumor_comp_tables.R` - make tables 4, 5, and 7
+* `sex_tcell_analysis.R` - make figure S6
 
-### Figure S6
+### Figure S7
 * `fusion_analysis.R`
 
-### Figure 5
+### Figure 6
 * `gtex_figures.R` - also defines EvP signature
