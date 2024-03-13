@@ -1,5 +1,6 @@
 # scc-meta-analysis
-This repo contains code for "Gene expression landscape of cutaneous squamous cell carcinoma progression" by Bencomo and Lee. 
+This repo contains code for ["Gene expression landscape of cutaneous squamous cell carcinoma progression"](https://www.biorxiv.org/content/10.1101/2023.12.11.570862v2.abstract)
+by Bencomo and Lee. 
 
 ## Data
 ### Raw Data
