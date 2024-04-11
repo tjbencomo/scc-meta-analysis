@@ -33,6 +33,7 @@ This folder contains various files needed to run some of the analysis scripts:
 * `metadata_all_studies.csv` - sample info for all samples initially considered
 * `metadata_post_star_qc_cohort.csv` - samples after filtering for STAR quality filters
 * `metadata_final_cohort.csv` - final cohort of samples used in analyses
+* `cell_line_fusions.csv` - STAR-Fusion results from A431 and SCCIC1 cell lines
 
 
 ## Analysis Scripts
