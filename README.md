@@ -15,7 +15,7 @@ above can generate BAM files and perform the DESeq2 analysis
 Raw FASTQ data were processed using a Snakemake workflow with STAR and RSEM with the hg38 (GENCODE v38) reference. 
 It can be found [here](https://github.com/tjbencomo/nmsc-star).
 
-**The processed data for this project (metadata, expression data, DEGs, fusions etc) is available at [Zenodo](https://zenodo.org/records/10272679).**
+**The processed data for this project (metadata, expression data, DEGs, fusions etc) is available at [Zenodo](https://zenodo.org/records/10958091).**
 
 ### `data/`
 This folder contains various files needed to run some of the analysis scripts:
